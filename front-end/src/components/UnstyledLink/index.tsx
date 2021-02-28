@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useStyles } from "./styles";
+import React from 'react'
 
 interface LinkProps {
   to: string
