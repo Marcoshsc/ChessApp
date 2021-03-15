@@ -1,19 +1,30 @@
 import { Box, Button, ButtonGroup, FormControl, Grid, InputLabel, Select } from "@material-ui/core"
-import React from "react"
+import React, { useState } from "react"
 import { useStyles } from "./styles"
 import { useStyles as useChessStyles } from '../ChessBoard/styles'
 import { useHistory, Switch, Route } from "react-router-dom"
 import Game from "../Game"
+import io from 'socket.io-client'
 
 export default function PlayPage() {
 
   const classes = useStyles()
   const chessClasses = useChessStyles()
   const history = useHistory()
+  const [rithm, setRithm] = useState<string>()
 
   const handleCreateGame = () => {
-    const gameID = 'anygameid'
-    history.push(`/play/${gameID}`)
+    const socket = io('http://localhost:3001/')
+    socket.emit('userData', {
+      userId: 123
+    })
+    socket.emit('waitGame', {
+      rithm: rithm
+    })
+    socket.on('gameCreated', (data: any) => {
+      socket.disconnect()
+      history.replace(`/play/${data.gameId}`)
+    })
   }
 
   return (
@@ -22,8 +33,10 @@ export default function PlayPage() {
         <InputLabel htmlFor="game-time" style={{backgroundColor: '#fafafa', padding: 2}} >Time</InputLabel>
         <Select
           native
-          // value={state.age}
-          // onChange={handleChange}
+          value={!rithm ? '' : rithm}
+          onChange={(e) => {
+            setRithm(e.target.value as string)
+          }}
           inputProps={{
             name: 'Time',
             id: 'game-time',
@@ -43,9 +56,9 @@ export default function PlayPage() {
         </Select>
       </FormControl>
       <ButtonGroup>
-        <Button onClick={handleCreateGame} variant="outlined" color="primary">Play against a friend</Button>
+        <Button variant="outlined" color="primary">Play against a friend</Button>
         <Button variant="outlined" color="primary">Play against the machine</Button>
-        <Button variant="outlined" color="primary">Play against a random opponent</Button>
+        <Button onClick={handleCreateGame} variant="outlined" color="primary">Play against a random opponent</Button>
       </ButtonGroup>
     </Box>
   )

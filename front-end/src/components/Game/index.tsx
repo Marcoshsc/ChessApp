@@ -1,7 +1,7 @@
 import { Box, Typography } from "@material-ui/core";
 import Chessboard from "chessboardjsx";
 import { createRef, useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { useStyles } from "./styles";
 import React from "react";
 import { Move, Square } from 'chess.js'
@@ -11,6 +11,7 @@ const Chess = require('chess.js')
 export default function Game() {
 
   const classes = useStyles()
+  const urlHistory = useHistory()
   const params: any = useParams()
 
   const timerRef = useRef<TimerFunctions>()

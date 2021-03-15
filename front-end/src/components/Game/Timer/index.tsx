@@ -11,6 +11,7 @@ const Timer = forwardRef((props, ref) => {
   
   const [value, setValue] = useState(300);
   const [stopped, setStopped] = useState(true)
+
   
   useEffect(() => {
     var timerID = setInterval(() => setValue(stopped ? value : value - 1), 1000);
