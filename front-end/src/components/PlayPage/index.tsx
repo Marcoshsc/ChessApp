@@ -23,7 +23,7 @@ export default function PlayPage() {
     })
     socket.on('gameCreated', (data: any) => {
       socket.disconnect()
-      history.replace(`/play/${data.gameId}`)
+      history.replace(`/play/${data.gameId}?color=${data.color}&rithm=${data.ritmo}`)
     })
   }
 

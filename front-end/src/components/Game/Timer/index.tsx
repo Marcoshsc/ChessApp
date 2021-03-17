@@ -7,10 +7,18 @@ export interface TimerFunctions {
   start(): void
 }
 
-const Timer = forwardRef((props, ref) => {
+export interface TimerProps {
+  startTime: number
+}
+
+const Timer = forwardRef(({ startTime }: TimerProps, ref) => {
   
-  const [value, setValue] = useState(300);
+  const [value, setValue] = useState(startTime * 60);
   const [stopped, setStopped] = useState(true)
+
+  useEffect(() => {
+    setValue(startTime * 60)
+  }, [startTime])
 
   
   useEffect(() => {
