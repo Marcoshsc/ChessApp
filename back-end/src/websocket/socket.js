@@ -1,6 +1,6 @@
 const { Chess } = require("chess.js")
 const { createGame, getGame } = require("../database/game")
-const { createMove } = require("../database/moves")
+const { createMove, getLastMove } = require("../database/moves")
 
 const userMap = {}
 const socketMap = {}
@@ -8,6 +8,7 @@ const waitingSockets = []
 const rithmMap = {}
 const gameMap = {}
 const userGameMap = {}
+const gameTimeMap = {}
 let i = 0;
 
 function configureListeners(io) {
@@ -23,9 +24,19 @@ function configureListeners(io) {
         const user1 = socketMap[socket.id]
         const user2 = socketMap[rithmMap[data.rithm]]
         const newGame = await createGame(user1, user2, data.rithm)
+        const totalGameTime = Number.parseInt(data.rithm.split('+')[0]) * 60
         gameMap[newGame] = new Chess()
         userGameMap[user1] = newGame
         userGameMap[user2] = newGame
+        gameTimeMap[newGame] = {}
+        gameTimeMap[newGame][user1] = {
+          interval: null,
+          time: totalGameTime
+        }
+        gameTimeMap[newGame][user2] = {
+          interval: null,
+          time: totalGameTime
+        }
         io.to(socket.id).emit('gameCreated', {
           gameId: newGame,
           color: 'white',
@@ -61,9 +72,22 @@ function configureListeners(io) {
       }
     })
 
+    socket.on('resign', async () => {
+      const userId = socketMap[socket.id]
+      const gameId = userGameMap[userId]
+      const dbGame = await getGame(gameId)
+      const roomId = `game${gameId}`
+      const lastMove = await getLastMove(dbGame)
+      io.to(roomId).emit('gameover', { 
+        winner: lastMove % 2 === 1 ? 'white' : 'black',
+        reason: 'resign' 
+      })
+    })
+
     socket.on('move', async (data) => {
       const { from, to } = data
       const userId = socketMap[socket.id]
+      console.log(socketMap)
       const gameId = userGameMap[userId]
       const dbGame = await getGame(gameId)
       const game = gameMap[gameId]
@@ -75,7 +99,43 @@ function configureListeners(io) {
       if (move === null) return
       const madeMove = await createMove(dbGame, from, to)
       const roomId = `game${gameId}`
+      const key = Object.keys(gameTimeMap[gameId]).find(el => {
+        const numEl = Number.parseInt(el)
+        return numEl !== userId
+      })
+      // console.log(gameTimeMap[gameId])
+      const color = madeMove.sequencial % 2 === 1 ? 'white' : 'black'
+      // console.log(`${color} played by ${userId} clock is stopped and reseted with ${madeMove.tempo}`)
+      clearInterval(gameTimeMap[gameId][userId].interval)
+      clearInterval(gameTimeMap[gameId][key].interval)
+      gameTimeMap[gameId][userId].time = madeMove.tempo
+      // console.log(`${madeMove.sequencial % 2 === 1 ? 'black' : 'white'} played by ${key} clock is started with ${gameTimeMap[gameId][key].time}`)
+      gameTimeMap[gameId][key].interval = setInterval(() => {
+        io.to(roomId).emit('gameover', {
+          winner: madeMove.sequencial % 2 === 1 ? 'white' : 'black',
+          reason: 'timeout'
+        })
+        clearInterval(gameTimeMap[gameId][userId])
+        clearInterval(gameTimeMap[gameId][key])
+      }, gameTimeMap[gameId][key].time * 1000)
       io.to(roomId).emit('madeMove', { ...madeMove, color: madeMove.sequencial % 2 === 1 ? 'white' : 'black' })
+      if(game.game_over()) {
+        clearInterval(gameTimeMap[gameId][userId])
+        clearInterval(gameTimeMap[gameId][key])
+        if(game.in_checkmate()) {
+          io.to(roomId).emit('gameover', { 
+            winner: madeMove.sequencial % 2 === 1 ? 'white' : 'black',
+            reason: 'checkmate' 
+          })
+        }
+        else {
+          io.to(roomId).emit('gameover', {
+            winner: null,
+            reason: 'draw'
+          })
+        }
+        return
+      }
     })
 
     socket.on('disconnect', () => {

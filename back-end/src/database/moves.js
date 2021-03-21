@@ -19,9 +19,6 @@ async function createMove(game, from, to) {
   if(lastMove) {
     const date1 = new Date(lastMove.momento_lance)
     remaining = Math.floor((lastOwnMove.tempo - ((date2 - date1) / 1000)) + increment)
-    console.log(`Tinha ${lastMove.tempo}, gastou: `)
-    console.log(((date2 - date1) / 1000))
-    console.log(`Agora tem: ${remaining}`)
   }
   else {
     remaining = gameTotalTime
@@ -46,7 +43,19 @@ async function getMoves(game) {
   return result
 }
 
+async function getLastMove(game) {
+  const client = getClient()
+
+  const text = 'select max(sequencial) from lance where id_partida=$1'
+  const params = [game.id]
+  const result = await client.query(text, params)
+
+  await client.end()
+  return result.rows[0].sequencial
+}
+
 module.exports = {
   createMove,
-  getMoves
+  getMoves,
+  getLastMove
 }

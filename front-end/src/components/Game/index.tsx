@@ -1,4 +1,4 @@
-import { Box, Typography } from "@material-ui/core";
+import { Box, Button, Typography } from "@material-ui/core";
 import Chessboard from "chessboardjsx";
 import { createRef, useCallback, useEffect, useRef, useState } from "react";
 import { useHistory, useLocation, useParams } from "react-router-dom";
@@ -23,6 +23,7 @@ export default function Game() {
   const [width, setWidth] = useState(600)
   const { id } = params
   const [socket, setSocket] = useState<SocketIOClient.Socket>(io('http://localhost:3001/'))
+  const [finalMessage, setFinalMessage] = useState('')
 
 
   // setTimeout(() => {
@@ -53,8 +54,39 @@ export default function Game() {
     socket.emit('joinGame', {
       gameId: id
     })
-    socket.on('message', (data: any) => {
-      console.log(data.message)
+    socket.on('gameover', (data: any) => {
+      if(data.reason === 'checkmate') {
+        const color = new URLSearchParams(search).get('color') as "white" | "black"
+        if(data.winner === color) {
+          setFinalMessage("You Won the game!")
+        }
+        else {
+          setFinalMessage("Your opponent won the game!")
+        }
+      }
+      else if(data.reason === 'draw') {
+        setFinalMessage("The game finished with a draw.")
+      }
+      else if(data.reason === 'resign') {
+        const color = new URLSearchParams(search).get('color') as "white" | "black"
+        if(data.winner === color) {
+          setFinalMessage("You Won the game! Your opponent resigned.")
+        }
+        else {
+          setFinalMessage("Your opponent won the game! You resigned.")
+        }
+      }
+      else if(data.reason === 'timeout') {
+        const color = new URLSearchParams(search).get('color') as "white" | "black"
+        if(data.winner === color) {
+          setFinalMessage("You Won the game! Your opponent ran out of time.")
+        }
+        else {
+          setFinalMessage("Your opponent won the game! You ran out of time.")
+        }
+      }
+      timerRef.current?.stop()
+      timer2Ref.current?.stop()
     })
     socket.on('madeMove', (data: any) => {
       handleDrop(data.de, data.para)
@@ -76,6 +108,11 @@ export default function Game() {
 
   return (
     <Box width='100%' className={classes.box}>
+      {finalMessage !== '' && 
+        <Typography align="center">
+          {finalMessage}
+        </Typography>
+      }
       <Box width={width}>
         <Typography>
           Opponent
@@ -88,11 +125,14 @@ export default function Game() {
       <Chessboard 
         orientation={new URLSearchParams(search).get('color') as "white" | "black"}
         onDrop={({sourceSquare, targetSquare}) => {
+          if((game.history({verbose:true}).length % 2 === 0 && new URLSearchParams(search).get('color') === 'black') ||
+          (game.history({verbose:true}).length % 2 !== 0 && new URLSearchParams(search).get('color') === 'white'))
+            return
           socket.emit('move', {
             from: sourceSquare,
             to: targetSquare
-          }
-        )}}
+          })
+        }}
         position={fen} calcWidth={({screenWidth}) => {
         setWidth(600)
         return 600
@@ -105,6 +145,9 @@ export default function Game() {
           startTime={Number.parseInt((new URLSearchParams(search).get('rithm') as string).split('+')[0])} 
           ref={timerRef}
         />
+        <Button onClick={() => {
+          socket.emit('resign')
+        }}>RESIGN</Button>
       </Box>
     </Box>
   )
