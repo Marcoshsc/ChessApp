@@ -17,7 +17,6 @@ export default function Game() {
   const { search } = useLocation()
   const timerRef = useRef<TimerFunctions>()
   const timer2Ref = useRef<TimerFunctions>()
-  const [player2Turn, setPlayer2Turn] = useState(false)
   const [game, setGame] = useState(new Chess())
   const [history, setHistory] = useState<Move[]>([])
   const [fen, setFen] = useState<string>('start')
@@ -79,23 +78,34 @@ export default function Game() {
     <Box width='100%' className={classes.box}>
       <Box width={width}>
         <Typography>
-          Player 1
+          Opponent
         </Typography>
-        <button onClick={() => (timerRef.current as TimerFunctions).start()}>Change this</button>
-        <button onClick={() => (timerRef.current as TimerFunctions).stop()}>Stop</button>
-        <Timer startTime={Number.parseInt((new URLSearchParams(search).get('rithm') as string).split('+')[0])} ref={timerRef}/>
-        <Timer startTime={Number.parseInt((new URLSearchParams(search).get('rithm') as string).split('+')[0])} ref={timer2Ref}/>
+        <Timer 
+          startTime={Number.parseInt((new URLSearchParams(search).get('rithm') as string).split('+')[0])} 
+          ref={timer2Ref}
+        />
       </Box>
       <Chessboard 
         orientation={new URLSearchParams(search).get('color') as "white" | "black"}
-        onDrop={({sourceSquare, targetSquare}) => {socket.emit('move', {
-          from: sourceSquare,
-          to: targetSquare
-        })}}
+        onDrop={({sourceSquare, targetSquare}) => {
+          socket.emit('move', {
+            from: sourceSquare,
+            to: targetSquare
+          }
+        )}}
         position={fen} calcWidth={({screenWidth}) => {
         setWidth(600)
         return 600
       }}/>
+      <Box width={width}>
+        <Typography>
+          You
+        </Typography>
+        <Timer 
+          startTime={Number.parseInt((new URLSearchParams(search).get('rithm') as string).split('+')[0])} 
+          ref={timerRef}
+        />
+      </Box>
     </Box>
   )
 
