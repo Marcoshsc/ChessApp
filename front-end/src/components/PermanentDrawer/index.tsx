@@ -17,6 +17,7 @@ import { Link, Route, Switch } from 'react-router-dom'
 import UnstyledLink from '../UnstyledLink';
 import PlayPage from '../PlayPage';
 import Game from '../Game';
+import ShowGames from '../ShowGames';
 
 export default function PermanentDrawerLeft() {
   const classes = useStyles();
@@ -72,7 +73,7 @@ export default function PermanentDrawerLeft() {
             <h1>friends</h1>
           </Route>
           <Route path="/games">
-            <h1>games</h1>
+            <ShowGames/>
           </Route>
         </Switch>
       </main>

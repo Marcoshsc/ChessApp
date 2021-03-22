@@ -92,6 +92,8 @@ function configureListeners(io) {
       const userId = socketMap[socket.id]
       const gameId = userGameMap[userId]
       const dbGame = await getGame(gameId)
+      if(dbGame.finalizada)
+        return
       const game = gameMap[gameId]
       let move = game.move({
         from: from,

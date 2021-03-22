@@ -12,6 +12,16 @@ async function createGame(user1, user2, rithm) {
   return gameId
 }
 
+async function getGames(userId) {
+  const client = getClient()
+
+  const text = 'select * from partida where player_brancas=$1 or player_pretas=$1'
+  const params = [userId]
+  const result = await client.query(text, params)
+  await client.end()
+  return result.rows
+}
+
 async function getGame(id) {
   const client = getClient()
 
@@ -35,5 +45,6 @@ async function finishGame(id, reason, winner) {
 module.exports = {
   createGame,
   getGame,
-  finishGame
+  finishGame,
+  getGames
 }

@@ -61,6 +61,8 @@ export default function LoginPage() {
     e.preventDefault()
     try {
       const userInfo = await login(email, password)
+      setEmail('')
+      setPassword('')
       setAuth(userInfo)
     } catch(err) {
       setErr(true)

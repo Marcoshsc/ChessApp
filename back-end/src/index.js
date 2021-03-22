@@ -5,6 +5,7 @@ const cors = require('cors')
 const socketIo = require('socket.io')
 const { configureListeners } = require('./websocket/socket')
 const { authRouter, validateJwt } = require('./routes/auth')
+const { gamesRouter } = require('./routes/games')
 
 const app = express()
 const server = http.Server(app)
@@ -35,6 +36,7 @@ app.use((req, res, next) => {
 })
 
 app.use('/user', authRouter)
+app.use('/games', gamesRouter)
 
 configureListeners(io)
 

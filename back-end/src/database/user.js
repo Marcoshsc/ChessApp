@@ -22,7 +22,29 @@ async function createUser(name, email, password) {
   return result.rows[0]
 }
 
+async function getUserInfos(userIds) {
+  const client = getClient()
+
+  function getPlaceHolders(list) {
+    let str = ''
+    list.forEach((_, idx) => {
+      str += `$${idx + 1}, `
+    })
+    str = str.slice(0, str.length - 2)
+    return str
+  }
+
+  const text = `select id, nome from usuario where id in (${getPlaceHolders(userIds)})`
+  console.log(text)
+  const params = userIds
+  const result = await client.query(text, params)
+
+  await client.end()
+  return result.rows
+}
+
 module.exports = {
   getUser,
-  createUser
+  createUser,
+  getUserInfos
 }

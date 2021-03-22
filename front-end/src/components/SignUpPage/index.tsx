@@ -65,6 +65,9 @@ export default function SignUp() {
     try {
       const userInfo = await signUp(nome, email, password)
       setAuth(userInfo)
+      setEmail('')
+      setPassword('')
+      setNome('')
       history.replace('/')
     } catch(err) {
       setErr(true)
