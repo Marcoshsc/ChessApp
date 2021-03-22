@@ -23,7 +23,17 @@ async function getGame(id) {
   return data
 }
 
+async function finishGame(id, reason, winner) {
+  const client = getClient()
+
+  const text = winner ? `update partida set finalizada=true, vencedor=$1, motivo_final=$2 where id=$3` : `update partida set finalizada=true, motivo_final=$1 where id=$2`
+  const params = winner ? [winner, reason, id] : [reason, id]
+  await client.query(text, params)
+  await client.end()
+}
+
 module.exports = {
   createGame,
-  getGame
+  getGame,
+  finishGame
 }

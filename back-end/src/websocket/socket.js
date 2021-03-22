@@ -1,5 +1,5 @@
 const { Chess } = require("chess.js")
-const { createGame, getGame } = require("../database/game")
+const { createGame, getGame, finishGame } = require("../database/game")
 const { createMove, getLastMove } = require("../database/moves")
 
 const userMap = {}
@@ -82,12 +82,12 @@ function configureListeners(io) {
         winner: lastMove % 2 === 1 ? 'white' : 'black',
         reason: 'resign' 
       })
+      finishGame(gameId, 'resign', lastMove % 2 === 1 ? 'white' : 'black')
     })
 
     socket.on('move', async (data) => {
       const { from, to } = data
       const userId = socketMap[socket.id]
-      console.log(socketMap)
       const gameId = userGameMap[userId]
       const dbGame = await getGame(gameId)
       const game = gameMap[gameId]
@@ -117,6 +117,7 @@ function configureListeners(io) {
         })
         clearInterval(gameTimeMap[gameId][userId])
         clearInterval(gameTimeMap[gameId][key])
+        finishGame(gameId, 'timeout', madeMove.sequencial % 2 === 1 ? 'white' : 'black')
       }, gameTimeMap[gameId][key].time * 1000)
       io.to(roomId).emit('madeMove', { ...madeMove, color: madeMove.sequencial % 2 === 1 ? 'white' : 'black' })
       if(game.game_over()) {
@@ -127,12 +128,14 @@ function configureListeners(io) {
             winner: madeMove.sequencial % 2 === 1 ? 'white' : 'black',
             reason: 'checkmate' 
           })
+          finishGame(gameId, 'checkmate', madeMove.sequencial % 2 === 1 ? 'white' : 'black')
         }
         else {
           io.to(roomId).emit('gameover', {
             winner: null,
             reason: 'draw'
           })
+          finishGame(gameId, 'draw')
         }
         return
       }

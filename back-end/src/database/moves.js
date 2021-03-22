@@ -40,7 +40,7 @@ async function getMoves(game) {
   const result = await client.query(text, params)
 
   await client.end()
-  return result
+  return result.rows
 }
 
 async function getLastMove(game) {

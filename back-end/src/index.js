@@ -4,6 +4,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const socketIo = require('socket.io')
 const { configureListeners } = require('./websocket/socket')
+const { authRouter } = require('./routes/auth')
 
 
 const app = express()
@@ -16,6 +17,7 @@ const io = socketIo(server, {
 
 app.use(bodyParser.json())
 app.use(cors())
+app.use('/user', authRouter)
 
 configureListeners(io)
 
