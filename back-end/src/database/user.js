@@ -1,10 +1,10 @@
 const { getClient } = require('./connection')
 
-async function getUser(email, password) {
+async function getUser(email) {
   const client = getClient()
 
-  const text = 'select id, nome from usuario where email=$1 and senha=$2'
-  const params = [email, password]
+  const text = 'select id, nome, senha from usuario where email=$1'
+  const params = [email]
   const result = await client.query(text, params)
 
   await client.end()

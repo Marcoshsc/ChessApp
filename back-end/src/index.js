@@ -4,8 +4,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const socketIo = require('socket.io')
 const { configureListeners } = require('./websocket/socket')
-const { authRouter } = require('./routes/auth')
-
+const { authRouter, validateJwt } = require('./routes/auth')
 
 const app = express()
 const server = http.Server(app)
@@ -17,6 +16,24 @@ const io = socketIo(server, {
 
 app.use(bodyParser.json())
 app.use(cors())
+
+app.use((req, res, next) => {
+  if (req.url === '/user/login' || req.url === '/user/signup') {
+    next()
+    return
+  }
+  if (!req.headers.authorization) {
+    res.status(401).json({
+      error: 'No authorization data was provided.'
+    })
+    return
+  }
+  const token = req.headers.authorization.replace('Bearer ', '')
+  const userId = validateJwt(token)
+  res.locals.jwtPayload = userId
+  next()
+})
+
 app.use('/user', authRouter)
 
 configureListeners(io)

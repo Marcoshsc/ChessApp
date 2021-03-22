@@ -5,6 +5,8 @@ import { useStyles as useChessStyles } from '../ChessBoard/styles'
 import { useHistory, Switch, Route } from "react-router-dom"
 import Game from "../Game"
 import io from 'socket.io-client'
+import { useRecoilState } from "recoil"
+import { authAtom } from "../../atoms/auth"
 
 export default function PlayPage() {
 
@@ -12,11 +14,12 @@ export default function PlayPage() {
   const chessClasses = useChessStyles()
   const history = useHistory()
   const [rithm, setRithm] = useState<string>()
+  const [auth,] = useRecoilState(authAtom)
 
   const handleCreateGame = () => {
     const socket = io('http://localhost:3001/')
     socket.emit('userData', {
-      userId: 123
+      token: auth?.jwt
     })
     socket.emit('waitGame', {
       rithm: rithm

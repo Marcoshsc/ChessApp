@@ -7,6 +7,8 @@ import React from "react";
 import { Move, Square } from 'chess.js'
 import Timer, { TimerFunctions } from "./Timer";
 import io from 'socket.io-client'
+import { useRecoilState } from "recoil";
+import { authAtom } from "../../atoms/auth";
 const Chess = require('chess.js')
 
 export default function Game() {
@@ -24,6 +26,7 @@ export default function Game() {
   const { id } = params
   const [socket, setSocket] = useState<SocketIOClient.Socket>(io('http://localhost:3001/'))
   const [finalMessage, setFinalMessage] = useState('')
+  const [auth, setAuth] = useRecoilState(authAtom)
 
 
   // setTimeout(() => {
@@ -49,7 +52,7 @@ export default function Game() {
 
   useEffect(() => {
     socket.emit('userData', {
-      userId: 123
+      token: auth?.jwt
     })
     socket.emit('joinGame', {
       gameId: id

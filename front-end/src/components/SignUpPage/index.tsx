@@ -15,6 +15,7 @@ import Container from '@material-ui/core/Container';
 import { useRecoilState } from 'recoil';
 import { authAtom } from '../../atoms/auth';
 import { signUp } from '../../services/authServices';
+import { useHistory } from 'react-router-dom';
 
 function Copyright() {
   return (
@@ -57,12 +58,14 @@ export default function SignUp() {
   const [password, setPassword] = useState('')
   const [nome, setNome] = useState('')
   const [err, setErr] = useState(false)
+  const history = useHistory()
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
       const userInfo = await signUp(nome, email, password)
       setAuth(userInfo)
+      history.replace('/')
     } catch(err) {
       setErr(true)
     }

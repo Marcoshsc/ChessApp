@@ -1,6 +1,7 @@
 const { Chess } = require("chess.js")
 const { createGame, getGame, finishGame } = require("../database/game")
 const { createMove, getLastMove } = require("../database/moves")
+const { validateJwt } = require('../routes/auth')
 
 const userMap = {}
 const socketMap = {}
@@ -9,14 +10,15 @@ const rithmMap = {}
 const gameMap = {}
 const userGameMap = {}
 const gameTimeMap = {}
-let i = 0;
 
 function configureListeners(io) {
   io.on('connection', (socket) => {
     socket.on('userData', (data) => {
-      userMap[i] = socket.id
-      socketMap[socket.id] = i
-      i = i == 1 ? 0 : 1
+      console.log(data)
+      const userId = validateJwt(data.token)
+      userMap[userId] = socket.id
+      socketMap[socket.id] = userId
+      // i = i == 1 ? 0 : 1
     })
 
     socket.on('waitGame', async (data) => {
