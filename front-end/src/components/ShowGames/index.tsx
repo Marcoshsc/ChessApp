@@ -1,6 +1,7 @@
 import { Button, Card, FormControl, InputLabel, MenuItem, Select, Typography } from "@material-ui/core";
 import React, { useState } from "react";
 import { useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { authAtom, UserInfo } from "../../atoms/auth";
 import { loadedGamesAtom, playerGamesAtom } from "../../atoms/game";
@@ -11,6 +12,8 @@ export default function ShowGames() {
   const [auth,] = useRecoilState(authAtom)
   const [games, setGames] = useRecoilState(playerGamesAtom)
   const [loadedGames, setLoadedGames] = useRecoilState(loadedGamesAtom)
+
+  const history = useHistory()
 
   type FilterResultType = 'all' | 'victory' | 'defeat'
   type FilterRithmType = 'all' | '1+0' | '1+1' | '3+0' | '3+2' | '5+0' | '5+3' | '10+0' | '10+5' | '15+15' | '30+30'
@@ -137,7 +140,7 @@ export default function ShowGames() {
             <Typography>{`Result: ${draw ? 'draw' : victory ? 'Victory' : 'Defeat'}`}</Typography>
             {!draw && <Typography>{`Reason end: ${game.reasonEnd}`}</Typography>}
             <div style={{width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-              <Button className={classes.button}>See game details</Button>
+              <Button className={classes.button} onClick={() => history.replace(`/review/${game.id}`)}>See game details</Button>
             </div>
           </Card>
         )

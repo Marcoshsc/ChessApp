@@ -15,6 +15,18 @@ export interface PlayerGame {
   reasonEnd: string
 }
 
+export interface GameMove {
+  sequencial: number
+  from: string
+  to: string
+  time: number
+}
+
+export interface PlayerGameWithMoves {
+  game: PlayerGame
+  moves: GameMove[]
+}
+
 export const loadedGamesAtom = atom<boolean>({
   key: 'loadedGames',
   default: false

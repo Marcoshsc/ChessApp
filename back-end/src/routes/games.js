@@ -1,5 +1,6 @@
 const { Router } = require("express")
-const { getGames } = require("../database/game")
+const { getGames, getGame } = require("../database/game")
+const { getMoves } = require("../database/moves")
 const { getUserInfos } = require("../database/user")
 
 const gamesRouter = Router()
@@ -35,6 +36,36 @@ gamesRouter.get('/:userId', (req, res) => {
     console.log(err)
     res.status(400).send({ error: 'Could not retrieve games '})
   })
+})
+
+gamesRouter.get('/game/:gameId', async (req, res) => {
+  const { gameId } = req.params
+  try {
+    const game = await getGame(gameId)
+    const moves = await getMoves(game)
+    const users = [game.player_brancas, game.player_pretas]
+    const userInfos = await getUserInfos(users)
+    const userInfoMaps = new Map()
+    userInfos.forEach(el => userInfoMaps.set(el.id, el))
+    const whitePlayer = userInfoMaps.get(game.player_brancas)
+    const blackPlayer = userInfoMaps.get(game.player_pretas)
+    const finalResult = {
+      game: {
+        ...game,
+        player_brancas: {
+          ...whitePlayer
+        },
+        player_pretas: {
+          ...blackPlayer
+        }
+      },
+      moves: moves
+    }
+    res.status(200).send(finalResult)
+  } catch(err) {
+    console.log(err)
+    res.status(400).send({ error: 'Could not load game data' })
+  }
 })
 
 module.exports = {

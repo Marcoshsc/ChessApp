@@ -15,7 +15,7 @@ async function createGame(user1, user2, rithm) {
 async function getGames(userId) {
   const client = getClient()
 
-  const text = 'select * from partida where player_brancas=$1 or player_pretas=$1'
+  const text = 'select * from partida where player_brancas=$1 or player_pretas=$1 and finalizada=true'
   const params = [userId]
   const result = await client.query(text, params)
   await client.end()
@@ -36,7 +36,7 @@ async function getGame(id) {
 async function finishGame(id, reason, winner) {
   const client = getClient()
 
-  const text = winner ? `update partida set finalizada=true, vencedor=$1, motivo_final=$2 where id=$3` : `update partida set finalizada=true, motivo_final=$1 where id=$2`
+  const text = winner ? `update partida set finalizada=true, vencedor=$1, motivo_final=$2 where id=$3 and finalizada=false` : `update partida set finalizada=true, motivo_final=$1 where id=$2 and finalizada=false`
   const params = winner ? [winner, reason, id] : [reason, id]
   await client.query(text, params)
   await client.end()

@@ -18,6 +18,7 @@ import UnstyledLink from '../UnstyledLink';
 import PlayPage from '../PlayPage';
 import Game from '../Game';
 import ShowGames from '../ShowGames';
+import GameReview from '../GameReview';
 
 export default function PermanentDrawerLeft() {
   const classes = useStyles();
@@ -74,6 +75,9 @@ export default function PermanentDrawerLeft() {
           </Route>
           <Route path="/games">
             <ShowGames/>
+          </Route>
+          <Route path="/review/:id">
+            <GameReview/>
           </Route>
         </Switch>
       </main>
