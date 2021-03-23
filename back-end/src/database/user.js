@@ -22,6 +22,17 @@ async function createUser(name, email, password) {
   return result.rows[0]
 }
 
+async function isFollowing(follower, following) {
+  const client = getClient()
+
+  const text = 'select exists (select id from follow where seguidor=$1 and seguindo=$2)'
+  const params = [follower, following]
+  const result = await client.query(text, params)
+
+  await client.end()
+  return result.rows[0]
+}
+
 async function getUserInfos(userIds) {
   const client = getClient()
 
@@ -43,8 +54,31 @@ async function getUserInfos(userIds) {
   return result.rows
 }
 
+async function doFollow(follower, following) {
+  const client = getClient()
+
+  const text = 'insert into follow (seguidor, seguindo) values ($1, $2)'
+  const params = [follower, following]
+  await client.query(text, params)
+
+  await client.end()
+}
+
+async function unFollow(follower, following) {
+  const client = getClient()
+
+  const text = 'delete from follow where seguidor=$1 and seguindo=$2'
+  const params = [follower, following]
+  await client.query(text, params)
+
+  await client.end()
+}
+
 module.exports = {
   getUser,
   createUser,
-  getUserInfos
+  getUserInfos,
+  isFollowing,
+  doFollow,
+  unFollow
 }

@@ -1,7 +1,7 @@
 const { Chess } = require("chess.js")
 const { createGame, getGame, finishGame } = require("../database/game")
 const { createMove, getLastMove } = require("../database/moves")
-const { validateJwt } = require('../routes/auth')
+const { validateJwt } = require('../routes/user')
 
 const userMap = {}
 const socketMap = {}

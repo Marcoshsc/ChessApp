@@ -20,6 +20,7 @@ export interface GamesInfo {
 export interface UserInfoProfile {
   user: Omit<UserInfo, 'jwt'> & { memberSince: Date }
   gamesInfo: GamesInfo
+  isFollowing: boolean
 }
 
 export const authAtom = atom<UserInfo | undefined>({

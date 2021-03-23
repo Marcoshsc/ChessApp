@@ -1,11 +1,11 @@
 const { Router } = require("express");
-const { getUser, createUser, getUserInfos } = require("../database/user");
+const { getUser, createUser, getUserInfos, isFollowing, doFollow, unFollow } = require("../database/user");
 const { getWonGamesByRithm, getDrawnGamesByRithm, getLostGamesByRithm } = require('../database/game')
 const bcrypt = require('bcrypt')
 const { secret } = require('../jwt/info')
 const jwt = require('jsonwebtoken')
 
-const authRouter = Router()
+const userRouter = Router()
 
 const validateJwt = (token) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -13,7 +13,7 @@ const validateJwt = (token) => {
   return userId
 }
 
-authRouter.post('/login', async (req, res) => {
+userRouter.post('/login', async (req, res) => {
   const { email, password } = req.body
   const userInfo = await getUser(email)
   if(userInfo) {
@@ -29,14 +29,14 @@ authRouter.post('/login', async (req, res) => {
     res.status(400).send({ error: 'Incorrect Login' })
 })
 
-authRouter.get('/profile/:userId', async (req, res) => {
+userRouter.get('/profile/:userId', async (req, res) => {
   const { userId } = req.params
   try {
     const wonGames = await getWonGamesByRithm(userId)
-    console.log(wonGames)
     const lostGames = await getLostGamesByRithm(userId)
     const drawnGames = await getDrawnGamesByRithm(userId)
     const userInfos = await getUserInfos([userId])
+    const following = await isFollowing(res.locals.jwtPayload, userId)
     const userInfo = userInfos[0]
     const finalJson = {
       user: userInfo,
@@ -44,15 +44,33 @@ authRouter.get('/profile/:userId', async (req, res) => {
         won: wonGames,
         lost: lostGames,
         drawn: drawnGames
-      }
+      },
+      isFollowing: following.exists
     }
     res.status(200).send(finalJson)
   } catch(err) {
+    console.log(err)
     res.status(400).send({ error: 'Could not retrieve profile' })
   }
 })
 
-authRouter.post('/signup', async (req, res) => {
+userRouter.post('/follow/:userId', async (req, res) => {
+  const { userId } = req.params
+  try {
+    const loggedUser = res.locals.jwtPayload
+    const following = await isFollowing(loggedUser, userId)
+    if(following)
+      await unFollow(loggedUser, userId)
+    else
+      await doFollow(loggedUser, userId)
+    res.status(200).send()
+  } catch(err) {
+    console.log(err)
+    res.status(400).send('Could not handle follow/unfollow.')
+  }
+})
+
+userRouter.post('/signup', async (req, res) => {
   const { email, password, name } = req.body
   const salt = await bcrypt.genSalt()
   const hashedPassword = await bcrypt.hash(password, salt)
@@ -76,6 +94,6 @@ function generateJwt(userId) {
 }
 
 module.exports = {
-  authRouter,
+  userRouter,
   validateJwt
 }

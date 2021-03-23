@@ -4,7 +4,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const socketIo = require('socket.io')
 const { configureListeners } = require('./websocket/socket')
-const { authRouter, validateJwt } = require('./routes/auth')
+const { userRouter, validateJwt } = require('./routes/user')
 const { gamesRouter } = require('./routes/games')
 
 const app = express()
@@ -35,7 +35,7 @@ app.use((req, res, next) => {
   next()
 })
 
-app.use('/user', authRouter)
+app.use('/user', userRouter)
 app.use('/games', gamesRouter)
 
 configureListeners(io)

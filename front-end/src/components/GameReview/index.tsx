@@ -84,12 +84,24 @@ export default function GameReview() {
       setFen(game.fen())
       setHistory(game.history({verbose: true}))
       if(sequencial % 2 === 0) {
-        timer1.changeValue(move.time)
-        timer2.changeValue(move2.time)
+        if(perspective === 'white') {
+          timer1.changeValue(move.time)
+          timer2.changeValue(move2.time)
+        }
+        else {
+          timer2.changeValue(move.time)
+          timer1.changeValue(move2.time)
+        }
       }
       else {
-        timer1.changeValue(move2.time)
-        timer2.changeValue(move.time)
+        if(perspective === 'white') {
+          timer1.changeValue(move2.time)
+          timer2.changeValue(move.time)
+        }
+        else {
+          timer2.changeValue(move2.time)
+          timer1.changeValue(move.time)
+        }
       }
       setSequencial(sequencial - 2)
     }
@@ -104,10 +116,18 @@ export default function GameReview() {
     handleDrop(move.from as Square, move.to as Square)
     const timer1 = timerRef.current as TimerFunctions
     const timer2 = timer2Ref.current as TimerFunctions
-    if(sequencial % 2 === 0)
-      timer1.changeValue(move.time)
-    else
-      timer2.changeValue(move.time)
+    if(sequencial % 2 === 0) {
+      if(perspective === 'white')
+        timer1.changeValue(move.time)
+      else
+        timer2.changeValue(move.time)
+    }
+    else {
+      if(perspective === 'white')
+        timer2.changeValue(move.time)
+      else
+        timer1.changeValue(move.time)
+    }
     setSequencial(sequencial + 1)
   }
 

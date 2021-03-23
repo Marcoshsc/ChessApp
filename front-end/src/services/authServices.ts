@@ -15,6 +15,7 @@ interface GamesInfoDTO {
 interface UserInfoProfileDTO {
   user: Omit<UserInfo, 'jwt'> & { data_criacao: string }
   gamesInfo: GamesInfoDTO
+  isFollowing: boolean
 }
 
 export async function login(email: string, password: string): Promise<UserInfo> {
@@ -27,6 +28,14 @@ export async function login(email: string, password: string): Promise<UserInfo> 
 export async function signUp(name: string, email: string, password: string): Promise<UserInfo> {
   const response = await axios.post('http://localhost:3001/user/signup', { name, email, password })
   return response.data
+}
+
+export async function followOrUnfollow(token: string, following: number): Promise<void> {
+  await axios.post(`http://localhost:3001/user/follow/${following}`, {}, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
 }
 
 export async function getProfile(token: string, userId: number): Promise<UserInfoProfile> {
@@ -47,6 +56,7 @@ export async function getProfile(token: string, userId: number): Promise<UserInf
       won: dto.gamesInfo.won.map(el => ({ total: Number.parseInt(el.total), rithm: el.ritmo })),
       lost: dto.gamesInfo.lost.map(el => ({ total: Number.parseInt(el.total), rithm: el.ritmo })),
       drawn: dto.gamesInfo.drawn.map(el => ({ total: Number.parseInt(el.total), rithm: el.ritmo }))
-    }
+    },
+    isFollowing: dto.isFollowing
   }
 }

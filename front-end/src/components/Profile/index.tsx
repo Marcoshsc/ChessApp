@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { useRecoilState } from 'recoil'
 import { authAtom, UserInfo, UserInfoProfile } from '../../atoms/auth'
-import { getProfile } from '../../services/authServices'
+import { followOrUnfollow, getProfile } from '../../services/authServices'
 import { formatDate } from '../../util/dateUtils'
 import { useStyles } from './styles'
 
@@ -59,10 +59,19 @@ export default function Profile() {
     history.replace(`/games/${id}`)
   }
 
+  const handleFollow = async () => {
+
+    await followOrUnfollow((auth as UserInfo).jwt, id)
+
+    const profile = await getProfile((auth as UserInfo).jwt, id)
+    setUserInfo(profile)
+  }
+
   return (
     <div>
       <Typography align='center' className={classes.title}>{`Profile of ${nome}`}</Typography>
       <Typography align='center'>{`Member since ${formatDate(memberSince)}`}</Typography>
+      {(auth as UserInfo).id !== Number.parseInt(id) && <Button onClick={handleFollow}>{userInfo.isFollowing ? 'Unfollow' : 'Follow'}</Button>}
       <div style={{padding: 10}}>
         <Typography className={classes.title}>{`Statistics`}</Typography>
         <Typography align="center" style={{fontSize: 20, paddingBottom: 20}}>{`Total played games: ${totalGamesPlayed}`}</Typography>
