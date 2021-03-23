@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { getUser, createUser, getUserInfos, isFollowing, doFollow, unFollow } = require("../database/user");
+const { getUser, createUser, getUserInfos, isFollowing, doFollow, unFollow, getFollowers, getFollowing, searchUser } = require("../database/user");
 const { getWonGamesByRithm, getDrawnGamesByRithm, getLostGamesByRithm } = require('../database/game')
 const bcrypt = require('bcrypt')
 const { secret } = require('../jwt/info')
@@ -68,6 +68,49 @@ userRouter.post('/follow/:userId', async (req, res) => {
   } catch(err) {
     console.log(err)
     res.status(400).send('Could not handle follow/unfollow.')
+  }
+})
+
+userRouter.get('/follows/:userId', async (req, res) => {
+  const { userId } = req.params
+  try {
+    const followers = await getFollowers(userId)
+    const following = await getFollowing(userId)
+    const userIds = [userId]
+    followers.forEach(el => userIds.push(el.seguidor))
+    following.forEach(el => userIds.push(el.seguindo))
+    const userInfos = await getUserInfos(userIds)
+    const userInfoMap = new Map()
+    userInfos.forEach(el => userInfoMap.set(el.id, el))
+    const finalResult = {
+      user: userInfoMap.get(userId),
+      followers: followers.map(el => ({
+        data_criacao: el.data_criacao,
+        seguidor: userInfoMap.get(el.seguidor)
+      })),
+      following: following.map(el => ({
+        data_criacao: el.data_criacao,
+        seguindo: userInfoMap.get(el.seguindo)
+      }))
+    }
+    res.status(200).send(finalResult)
+  } catch(err) {
+    console.log(err)
+    res.status(400).send('Could not get follow info.')
+  }
+})
+
+userRouter.get('/search/:username', async (req, res) => {
+  const { username } = req.params
+  try {
+    const user = await searchUser(username)
+    if(user)
+      res.status(200).send(user)
+    else
+      res.status(204).send()
+  } catch(err) {
+    console.log(err)
+    res.status(400).send('Could not search for user.')
   }
 })
 

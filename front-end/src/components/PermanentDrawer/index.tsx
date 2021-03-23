@@ -21,7 +21,8 @@ import ShowGames from '../ShowGames';
 import GameReview from '../GameReview';
 import Profile from '../Profile';
 import { useRecoilState } from 'recoil';
-import { authAtom, UserInfo } from '../../atoms/auth';
+import { authAtom, UserInfo } from '../../atoms/user';
+import FollowingPage from '../FollowingPage';
 
 export default function PermanentDrawerLeft() {
   const classes = useStyles();
@@ -54,7 +55,7 @@ export default function PermanentDrawerLeft() {
           </ListItem>
           <ListItem button>
             <ListItemIcon><PeopleIcon/></ListItemIcon>
-            <ListItemText primary={<UnstyledLink to="/friends">Friends</UnstyledLink>} />
+            <ListItemText primary={<UnstyledLink to={`/following/${(auth as UserInfo).id}`}>Follow Interface</UnstyledLink>} />
           </ListItem>
           <ListItem button>
             <ListItemIcon><AccountCircleIcon/></ListItemIcon>
@@ -74,8 +75,8 @@ export default function PermanentDrawerLeft() {
           <Route path="/profile/:id">
             <Profile/>
           </Route>
-          <Route path="/friends">
-            <h1>friends</h1>
+          <Route path="/following/:id">
+            <FollowingPage/>
           </Route>
           <Route path="/games/:id">
             <ShowGames/>

@@ -6,7 +6,7 @@ import { useHistory, Switch, Route } from "react-router-dom"
 import Game from "../Game"
 import io from 'socket.io-client'
 import { useRecoilState } from "recoil"
-import { authAtom } from "../../atoms/auth"
+import { authAtom } from "../../atoms/user"
 
 export default function PlayPage() {
 

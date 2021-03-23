@@ -23,6 +23,17 @@ export interface UserInfoProfile {
   isFollowing: boolean
 }
 
+export interface FollowSingle {
+  creationDate: Date
+  info: Omit<UserInfo, 'jwt'>
+}
+
+export interface FollowInfo {
+  user: Omit<UserInfo, 'jwt'>
+  followers: FollowSingle[]
+  following: FollowSingle[]
+}
+
 export const authAtom = atom<UserInfo | undefined>({
   key: 'auth',
   default: undefined

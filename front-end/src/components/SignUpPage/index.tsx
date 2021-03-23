@@ -13,8 +13,8 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { useRecoilState } from 'recoil';
-import { authAtom } from '../../atoms/auth';
-import { signUp } from '../../services/authServices';
+import { authAtom } from '../../atoms/user';
+import { signUp } from '../../services/userServices';
 import { useHistory } from 'react-router-dom';
 
 function Copyright() {

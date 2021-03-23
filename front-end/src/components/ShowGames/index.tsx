@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import { authAtom, UserInfo } from "../../atoms/auth";
+import { authAtom, UserInfo } from "../../atoms/user";
 import { PlayerGame } from "../../atoms/game";
 import { getGames } from "../../services/gameServices";
 import { formatDate } from "../../util/dateUtils";

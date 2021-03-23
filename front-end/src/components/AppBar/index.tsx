@@ -15,7 +15,7 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import { useStyles } from './styles';
 import { useRecoilState } from 'recoil';
-import { authAtom } from '../../atoms/auth';
+import { authAtom } from '../../atoms/user';
 
 
 export default function PrimarySearchAppBar() {

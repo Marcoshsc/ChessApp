@@ -13,8 +13,8 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { useRecoilState } from 'recoil';
-import { authAtom } from '../../atoms/auth';
-import { login } from '../../services/authServices';
+import { authAtom } from '../../atoms/user';
+import { login } from '../../services/userServices';
 
 function Copyright() {
   return (

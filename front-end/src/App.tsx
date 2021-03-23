@@ -4,7 +4,7 @@ import MainPage from './components/MainPage';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import "./global.css"
 import { useRecoilState } from 'recoil';
-import { authAtom } from './atoms/auth';
+import { authAtom } from './atoms/user';
 import LoginPage from './components/LoginPage';
 import SignUpPage from './components/SignUpPage';
 

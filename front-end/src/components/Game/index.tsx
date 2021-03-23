@@ -8,7 +8,7 @@ import { Move, Square } from 'chess.js'
 import Timer, { TimerFunctions } from "./Timer";
 import io from 'socket.io-client'
 import { useRecoilState } from "recoil";
-import { authAtom } from "../../atoms/auth";
+import { authAtom } from "../../atoms/user";
 const Chess = require('chess.js')
 
 export default function Game() {

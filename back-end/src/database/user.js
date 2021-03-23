@@ -57,7 +57,6 @@ async function getUserInfos(userIds) {
 async function doFollow(follower, following) {
   const client = getClient()
 
-  console.log('following')
   const text = 'insert into follow (seguidor, seguindo, data_criacao) values ($1, $2, $3)'
   const params = [follower, following, new Date()]
   await client.query(text, params)
@@ -68,12 +67,43 @@ async function doFollow(follower, following) {
 async function unFollow(follower, following) {
   const client = getClient()
 
-  console.log('unfollowing')
   const text = 'delete from follow where seguidor=$1 and seguindo=$2'
   const params = [follower, following]
   await client.query(text, params)
 
   await client.end()
+}
+
+async function getFollowing(userId) {
+  const client = getClient()
+
+  const text = 'select * from follow where seguidor=$1'
+  const params = [userId]
+  await client.query(text, params)
+
+  await client.end()
+}
+
+async function getFollowers(userId) {
+  const client = getClient()
+
+  const text = 'select * from follow where seguindo=$1'
+  const params = [userId]
+  const result = await client.query(text, params)
+
+  await client.end()
+  return result.rows
+}
+
+async function searchUser(username) {
+  const client = getClient()
+
+  const text = 'select id, nome, data_criacao from usuario where nome=$1'
+  const params = [username]
+  const result = await client.query(text, params)
+
+  await client.end()
+  return result.rows.length === 0 ? undefined : result.rows[0]
 }
 
 module.exports = {
@@ -82,5 +112,8 @@ module.exports = {
   getUserInfos,
   isFollowing,
   doFollow,
-  unFollow
+  unFollow,
+  getFollowers,
+  getFollowing,
+  searchUser
 }

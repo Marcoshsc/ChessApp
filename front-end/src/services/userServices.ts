@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { UserInfo, UserInfoProfile } from '../atoms/auth'
+import { FollowInfo, UserInfo, UserInfoProfile } from '../atoms/user'
 
 interface GameInfoDTO {
   total: string
@@ -16,6 +16,22 @@ interface UserInfoProfileDTO {
   user: Omit<UserInfo, 'jwt'> & { data_criacao: string }
   gamesInfo: GamesInfoDTO
   isFollowing: boolean
+}
+
+export interface FollowerSingleDTO {
+  creation_date: string
+  seguidor: Omit<UserInfo, 'jwt'>
+}
+
+export interface FollowingSingleDTO {
+  creation_date: string
+  seguindo: Omit<UserInfo, 'jwt'>
+}
+
+export interface FollowInfoDTO {
+  user: Omit<UserInfo, 'jwt'>
+  followers: FollowerSingleDTO[]
+  following: FollowingSingleDTO[]
 }
 
 export async function login(email: string, password: string): Promise<UserInfo> {
@@ -36,6 +52,27 @@ export async function followOrUnfollow(token: string, following: number): Promis
       'Authorization': `Bearer ${token}`
     }
   })
+}
+
+export async function getFollowInfo(token: string, userId: number): Promise<FollowInfo> {
+  const response = await axios.get(`http://localhost:3001/user/follows/${userId}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
+
+  const dto: FollowInfoDTO = response.data
+  return {
+    user: dto.user,
+    followers: dto.followers.map(el => ({
+      creationDate: new Date(el.creation_date),
+      info: el.seguidor
+    })),
+    following: dto.following.map(el => ({
+      creationDate: new Date(el.creation_date),
+      info: el.seguindo
+    }))
+  }
 }
 
 export async function getProfile(token: string, userId: number): Promise<UserInfoProfile> {
