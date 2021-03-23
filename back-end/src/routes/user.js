@@ -59,7 +59,8 @@ userRouter.post('/follow/:userId', async (req, res) => {
   try {
     const loggedUser = res.locals.jwtPayload
     const following = await isFollowing(loggedUser, userId)
-    if(following)
+    console.log(following)
+    if(following.exists)
       await unFollow(loggedUser, userId)
     else
       await doFollow(loggedUser, userId)

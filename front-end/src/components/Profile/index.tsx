@@ -61,6 +61,7 @@ export default function Profile() {
 
   const handleFollow = async () => {
 
+    console.log('got here')
     await followOrUnfollow((auth as UserInfo).jwt, id)
 
     const profile = await getProfile((auth as UserInfo).jwt, id)

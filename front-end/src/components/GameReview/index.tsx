@@ -1,7 +1,7 @@
 import { Box, Typography, Button } from '@material-ui/core'
 import Chessboard from 'chessboardjsx'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { useRecoilState } from 'recoil'
 import { authAtom, UserInfo } from '../../atoms/auth'
 import { PlayerGameWithMoves } from '../../atoms/game'
@@ -25,6 +25,7 @@ export default function GameReview() {
   const [fen, setFen] = useState<string>('start')
   const [width, setWidth] = useState(600)
   const [sequencial, setSequencial] = useState(0)
+  const routerHistory = useHistory()
 
   const concreteAuth = auth as UserInfo
 
@@ -150,6 +151,12 @@ export default function GameReview() {
     }
   }
 
+  const handleGoToProfile = (userId: number) => {
+    return () => {
+      routerHistory.replace(`/profile/${userId}`)
+    }
+  }
+
   return (
     <Box width='100%' className={classes.box}>
       <div>
@@ -163,9 +170,9 @@ export default function GameReview() {
         </Typography>
       }
       <Box width={width}>
-        <Typography>
-          {dbGame ? perspective === 'black' ? dbGame.game.whitePlayer.name : dbGame.game.blackPlayer.name : 'Loading Info...'}
-        </Typography>
+        <Button onClick={dbGame ? handleGoToProfile(perspective === 'black' ? dbGame.game.whitePlayer.id : dbGame.game.blackPlayer.id) : () => {}}>
+          {`${dbGame ? perspective === 'black' ? dbGame.game.whitePlayer.name : dbGame.game.blackPlayer.name : 'Loading Info...'} (Click To See Profile)`}
+        </Button>
         <Timer 
           startTime={dbGame ? Number.parseInt(dbGame.game.rithm.split('+')[0]) * 60 : 0} 
           ref={timer2Ref}
@@ -179,9 +186,9 @@ export default function GameReview() {
         return 600
       }}/>
       <Box width={width}>
-        <Typography>
-          {dbGame ? perspective === 'white' ? dbGame.game.whitePlayer.name : dbGame.game.blackPlayer.name : 'Loading Info...'}
-        </Typography>
+        <Button onClick={dbGame ? handleGoToProfile(perspective === 'white' ? dbGame.game.whitePlayer.id : dbGame.game.blackPlayer.id) : () => {}}>
+          {`${dbGame ? perspective === 'white' ? dbGame.game.whitePlayer.name : dbGame.game.blackPlayer.name : 'Loading Info...'} (Click To See Profile)`}
+        </Button>
         <Timer 
           startTime={dbGame ? Number.parseInt(dbGame.game.rithm.split('+')[0]) * 60 : 0} 
           ref={timerRef}

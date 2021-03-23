@@ -57,6 +57,7 @@ async function getUserInfos(userIds) {
 async function doFollow(follower, following) {
   const client = getClient()
 
+  console.log('following')
   const text = 'insert into follow (seguidor, seguindo) values ($1, $2)'
   const params = [follower, following]
   await client.query(text, params)
@@ -67,6 +68,7 @@ async function doFollow(follower, following) {
 async function unFollow(follower, following) {
   const client = getClient()
 
+  console.log('unfollowing')
   const text = 'delete from follow where seguidor=$1 and seguindo=$2'
   const params = [follower, following]
   await client.query(text, params)
