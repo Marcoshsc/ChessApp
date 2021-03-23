@@ -58,8 +58,8 @@ async function doFollow(follower, following) {
   const client = getClient()
 
   console.log('following')
-  const text = 'insert into follow (seguidor, seguindo) values ($1, $2)'
-  const params = [follower, following]
+  const text = 'insert into follow (seguidor, seguindo, data_criacao) values ($1, $2, $3)'
+  const params = [follower, following, new Date()]
   await client.query(text, params)
 
   await client.end()

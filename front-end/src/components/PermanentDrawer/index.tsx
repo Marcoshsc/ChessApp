@@ -50,7 +50,7 @@ export default function PermanentDrawerLeft() {
           </ListItem>
           <ListItem button>
             <ListItemIcon><GamepadIcon/></ListItemIcon>
-            <ListItemText primary={<UnstyledLink to="/games">My Games</UnstyledLink>} />
+            <ListItemText primary={<UnstyledLink to={`/games/${(auth as UserInfo).id}`}>My Games</UnstyledLink>} />
           </ListItem>
           <ListItem button>
             <ListItemIcon><PeopleIcon/></ListItemIcon>
@@ -77,7 +77,7 @@ export default function PermanentDrawerLeft() {
           <Route path="/friends">
             <h1>friends</h1>
           </Route>
-          <Route path="/games">
+          <Route path="/games/:id">
             <ShowGames/>
           </Route>
           <Route path="/review/:id">

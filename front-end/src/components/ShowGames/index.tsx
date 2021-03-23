@@ -1,20 +1,20 @@
 import { Button, Card, FormControl, InputLabel, MenuItem, Select, Typography } from "@material-ui/core";
 import React, { useState } from "react";
 import { useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { authAtom, UserInfo } from "../../atoms/auth";
-import { loadedGamesAtom, playerGamesAtom } from "../../atoms/game";
+import { PlayerGame } from "../../atoms/game";
 import { getGames } from "../../services/gameServices";
 import { formatDate } from "../../util/dateUtils";
 import { useStyles } from "./styles";
 
 export default function ShowGames() {
   const [auth,] = useRecoilState(authAtom)
-  const [games, setGames] = useRecoilState(playerGamesAtom)
-  const [loadedGames, setLoadedGames] = useRecoilState(loadedGamesAtom)
+  const [games, setGames] = useState<PlayerGame[]>([])
 
   const history = useHistory()
+  const { id } = useParams() as any
 
   type FilterResultType = 'all' | 'victory' | 'defeat'
   type FilterRithmType = 'all' | '1+0' | '1+1' | '3+0' | '3+2' | '5+0' | '5+3' | '10+0' | '10+5' | '15+15' | '30+30'
@@ -32,14 +32,11 @@ export default function ShowGames() {
 
   useEffect(() => {
     async function loadData() {
-      if(!loadedGames) {
-        const dbGames = await getGames(concreteAuth.jwt, concreteAuth.id)
-        setGames(dbGames)
-        setLoadedGames(true)
-      }
+      const dbGames = await getGames(concreteAuth.jwt, id)
+      setGames(dbGames)
     }
     loadData()
-  }, [auth, concreteAuth.id, concreteAuth.jwt, loadedGames, setGames, setLoadedGames])
+  }, [auth, concreteAuth.jwt, setGames, id])
 
   return (
     <div className={classes.box}>
@@ -109,7 +106,7 @@ export default function ShowGames() {
         </FormControl>
       </div>
       {games.filter(game => {
-        const color = game.blackPlayer.id === concreteAuth.id ? 'black' : 'white'
+        const color = game.blackPlayer.id === (Number.parseInt(id)) ? 'black' : 'white'
         if(filterResult !== 'all' && ((game.winner !== color && filterResult === 'victory') || (game.winner === color && filterResult === 'defeat')))
           return false
         if(filterColor !== 'all' && color !== filterColor)
@@ -120,10 +117,10 @@ export default function ShowGames() {
           return false
         return true
       }).map(game => {
-        const color = game.blackPlayer.id === concreteAuth.id ? 'black' : 'white'
-        const opponent = game.blackPlayer.id === concreteAuth.id ? game.whitePlayer : game.blackPlayer
-        const victory = (game.blackPlayer.id === concreteAuth.id && game.winner === 'black') ||
-        (game.whitePlayer.id === concreteAuth.id && game.winner === 'white')
+        const color = game.blackPlayer.id === (Number.parseInt(id)) ? 'black' : 'white'
+        const opponent = game.blackPlayer.id === (Number.parseInt(id)) ? game.whitePlayer : game.blackPlayer
+        const victory = (game.blackPlayer.id === (Number.parseInt(id)) && game.winner === 'black') ||
+        (game.whitePlayer.id === (Number.parseInt(id)) && game.winner === 'white')
         const draw = game.reasonEnd === 'draw'
         return (
           <Card key={game.id} className={classes.card}>
