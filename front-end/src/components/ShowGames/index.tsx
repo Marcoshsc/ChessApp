@@ -6,6 +6,7 @@ import { useRecoilState } from "recoil";
 import { authAtom, UserInfo } from "../../atoms/auth";
 import { loadedGamesAtom, playerGamesAtom } from "../../atoms/game";
 import { getGames } from "../../services/gameServices";
+import { formatDate } from "../../util/dateUtils";
 import { useStyles } from "./styles";
 
 export default function ShowGames() {
@@ -39,15 +40,6 @@ export default function ShowGames() {
     }
     loadData()
   }, [auth, concreteAuth.id, concreteAuth.jwt, loadedGames, setGames, setLoadedGames])
-
-  function formatNumber(n: number): string {
-    return n < 10 ? `0${n}` : n.toString()
-  }
-
-  function formatDate(dt: Date): string {
-    return `${formatNumber(dt.getDate())}/${formatNumber(dt.getMonth() + 1)}/${formatNumber(dt.getFullYear())} -` +
-    ` ${formatNumber(dt.getHours())}:${formatNumber(dt.getMinutes())}`
-  }
 
   return (
     <div className={classes.box}>

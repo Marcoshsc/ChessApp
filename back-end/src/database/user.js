@@ -14,8 +14,8 @@ async function getUser(email) {
 async function createUser(name, email, password) {
   const client = getClient()
 
-  const text = 'insert into usuario (nome, email, senha) values ($1, $2, $3) returning id, nome'
-  const params = [name, email, password]
+  const text = 'insert into usuario (nome, email, senha, data_criacao) values ($1, $2, $3, $4) returning id, nome'
+  const params = [name, email, password, new Date()]
   const result = await client.query(text, params)
 
   await client.end()
@@ -34,7 +34,7 @@ async function getUserInfos(userIds) {
     return str
   }
 
-  const text = `select id, nome from usuario where id in (${getPlaceHolders(userIds)})`
+  const text = `select id, nome, data_criacao from usuario where id in (${getPlaceHolders(userIds)})`
   console.log(text)
   const params = userIds
   const result = await client.query(text, params)

@@ -42,9 +42,42 @@ async function finishGame(id, reason, winner) {
   await client.end()
 }
 
+async function getWonGamesByRithm(userId) {
+  const client = getClient()
+
+  const text = 'select count(id) as total, ritmo from partida where (player_brancas=$1 and vencedor=$2) or (player_pretas=$1 and vencedor=$3) group by ritmo'
+  const params = [userId, 'white', 'black']
+  const result = await client.query(text, params)
+  await client.end()
+  return result.rows
+}
+
+async function getLostGamesByRithm(userId) {
+  const client = getClient()
+
+  const text = 'select count(id) as total, ritmo from partida where (player_brancas=$1 and vencedor=$3) or (player_pretas=$1 and vencedor=$2) group by ritmo'
+  const params = [userId, 'white', 'black']
+  const result = await client.query(text, params)
+  await client.end()
+  return result.rows
+}
+
+async function getDrawnGamesByRithm(userId) {
+  const client = getClient()
+
+  const text = 'select count(id) as total, ritmo from partida where (player_brancas=$1 or player_pretas=$1) and vencedor is null group by ritmo'
+  const params = [userId]
+  const result = await client.query(text, params)
+  await client.end()
+  return result.rows
+}
+
 module.exports = {
   createGame,
   getGame,
   finishGame,
-  getGames
+  getGames,
+  getWonGamesByRithm,
+  getLostGamesByRithm,
+  getDrawnGamesByRithm
 }

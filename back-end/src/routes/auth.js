@@ -1,5 +1,6 @@
 const { Router } = require("express");
-const { getUser, createUser } = require("../database/user");
+const { getUser, createUser, getUserInfos } = require("../database/user");
+const { getWonGamesByRithm, getDrawnGamesByRithm, getLostGamesByRithm } = require('../database/game')
 const bcrypt = require('bcrypt')
 const { secret } = require('../jwt/info')
 const jwt = require('jsonwebtoken')
@@ -26,6 +27,29 @@ authRouter.post('/login', async (req, res) => {
   }
   else
     res.status(400).send({ error: 'Incorrect Login' })
+})
+
+authRouter.get('/profile/:userId', async (req, res) => {
+  const { userId } = req.params
+  try {
+    const wonGames = await getWonGamesByRithm(userId)
+    console.log(wonGames)
+    const lostGames = await getLostGamesByRithm(userId)
+    const drawnGames = await getDrawnGamesByRithm(userId)
+    const userInfos = await getUserInfos([userId])
+    const userInfo = userInfos[0]
+    const finalJson = {
+      user: userInfo,
+      gamesInfo: {
+        won: wonGames,
+        lost: lostGames,
+        drawn: drawnGames
+      }
+    }
+    res.status(200).send(finalJson)
+  } catch(err) {
+    res.status(400).send({ error: 'Could not retrieve profile' })
+  }
 })
 
 authRouter.post('/signup', async (req, res) => {
