@@ -25,7 +25,7 @@ async function createUser(name, email, password) {
 async function isFollowing(follower, following) {
   const client = getClient()
 
-  const text = 'select exists (select id from follow where seguidor=$1 and seguindo=$2)'
+  const text = 'select exists (select * from follow where seguidor=$1 and seguindo=$2)'
   const params = [follower, following]
   const result = await client.query(text, params)
 

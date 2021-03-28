@@ -9,7 +9,7 @@ gamesRouter.get('/:userId', (req, res) => {
   const { userId } = req.params
   getGames(userId)
   .then(async games => {
-    const opponentIds = games.map(game => game.player_brancas === userId ? game.player_pretas : game.player_brancas)
+    const opponentIds = games.map(game => game.player_brancas === Number.parseInt(userId) ? game.player_pretas : game.player_brancas)
     opponentIds.push(userId)
     const opponentInfos = await getUserInfos(opponentIds)
     const opponentInfoMaps = new Map()

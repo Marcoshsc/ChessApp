@@ -4,7 +4,7 @@ function getClient() {
   const client = new Client({
     user: 'postgres',
     host: 'localhost',
-    database: 'ChessApp',
+    database: 'chessapp2',
     password: '12345',
     port: 5432,
   })
