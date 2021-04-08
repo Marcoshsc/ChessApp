@@ -1,39 +1,57 @@
-import { Box, Button, ButtonGroup, FormControl, Grid, InputLabel, Select } from "@material-ui/core"
-import React, { useState } from "react"
-import { useStyles } from "./styles"
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  CircularProgress,
+  FormControl,
+  Grid,
+  InputLabel,
+  Select,
+} from '@material-ui/core'
+import React, { useState } from 'react'
+import { useStyles } from './styles'
 import { useStyles as useChessStyles } from '../ChessBoard/styles'
-import { useHistory, Switch, Route } from "react-router-dom"
-import Game from "../Game"
+import { useHistory, Switch, Route } from 'react-router-dom'
+import Game from '../Game'
 import io from 'socket.io-client'
-import { useRecoilState } from "recoil"
-import { authAtom } from "../../atoms/user"
+import { useRecoilState } from 'recoil'
+import { authAtom } from '../../atoms/user'
 
 export default function PlayPage() {
-
   const classes = useStyles()
   const chessClasses = useChessStyles()
   const history = useHistory()
   const [rithm, setRithm] = useState<string>()
-  const [auth,] = useRecoilState(authAtom)
+  const [auth] = useRecoilState(authAtom)
+  const [waiting, setWaiting] = useState(false)
 
   const handleCreateGame = () => {
+    setWaiting(true)
     const socket = io('http://localhost:3001/')
     socket.emit('userData', {
-      token: auth?.jwt
+      token: auth?.jwt,
     })
     socket.emit('waitGame', {
-      rithm: rithm
+      rithm: rithm,
     })
     socket.on('gameCreated', (data: any) => {
+      setWaiting(false)
       socket.disconnect()
-      history.replace(`/play/${data.gameId}?color=${data.color}&rithm=${data.ritmo}`)
+      history.replace(
+        `/play/${data.gameId}?color=${data.color}&rithm=${data.ritmo}`,
+      )
     })
   }
 
   return (
     <Box width="100%" className={classes.box}>
       <FormControl variant="outlined" className={classes.formControl}>
-        <InputLabel htmlFor="game-time" style={{backgroundColor: '#fafafa', padding: 2}} >Time</InputLabel>
+        <InputLabel
+          htmlFor="game-time"
+          style={{ backgroundColor: '#fafafa', padding: 2 }}
+        >
+          Time
+        </InputLabel>
         <Select
           native
           value={!rithm ? '' : rithm}
@@ -59,11 +77,11 @@ export default function PlayPage() {
         </Select>
       </FormControl>
       <ButtonGroup>
-        <Button variant="outlined" color="primary">Play against a friend</Button>
-        <Button variant="outlined" color="primary">Play against the machine</Button>
-        <Button onClick={handleCreateGame} variant="outlined" color="primary">Play against a random opponent</Button>
+        <Button onClick={handleCreateGame} variant="outlined" color="primary">
+          Play against a random opponent
+        </Button>
       </ButtonGroup>
+      {waiting && <CircularProgress />}
     </Box>
   )
-
 }

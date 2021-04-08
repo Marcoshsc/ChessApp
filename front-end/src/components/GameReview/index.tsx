@@ -12,10 +12,9 @@ import { Move, Square } from 'chess.js'
 const Chess = require('chess.js')
 
 export default function GameReview() {
-
   const classes = useStyles()
   const { id } = useParams() as any
-  const [auth,] = useRecoilState(authAtom)
+  const [auth] = useRecoilState(authAtom)
   const [dbGame, setDbGame] = useState<PlayerGameWithMoves>()
   const [perspective, setPerspective] = useState<'white' | 'black'>('white')
   const timerRef = useRef<TimerFunctions>()
@@ -38,7 +37,7 @@ export default function GameReview() {
   }, [concreteAuth.jwt, id])
 
   useEffect(() => {
-    if(dbGame) {
+    if (dbGame) {
       const timer1 = timerRef.current as TimerFunctions
       const timer2 = timer2Ref.current as TimerFunctions
       timer1.changeValue(Number.parseInt(dbGame.game.rithm.split('+')[0]) * 60)
@@ -49,57 +48,56 @@ export default function GameReview() {
     }
   }, [dbGame])
 
-  const handleDrop = useCallback(function (sourceSquare: Square, targetSquare: Square) {
-    if(game.game_over())
-      return
-    // see if the move is legal
-    let move = game.move({
-      from: sourceSquare,
-      to: targetSquare,
-      promotion: "q" // always promote to a queen for example simplicity
-    });
+  const handleDrop = useCallback(
+    function (sourceSquare: Square, targetSquare: Square) {
+      if (game.game_over()) return
+      // see if the move is legal
+      let move = game.move({
+        from: sourceSquare,
+        to: targetSquare,
+        promotion: 'q', // always promote to a queen for example simplicity
+      })
 
-    // illegal move
-    if (move === null) {
-      console.log('move is null')
-      return;
-    }
-    setFen(game.fen())
-    setHistory(game.history({verbose: true}))
-  }, [game])
+      // illegal move
+      if (move === null) {
+        console.log('move is null')
+        return
+      }
+      setFen(game.fen())
+      setHistory(game.history({ verbose: true }))
+    },
+    [game],
+  )
 
   const handlePrevMove = () => {
     const timer1 = timerRef.current as TimerFunctions
     const timer2 = timer2Ref.current as TimerFunctions
-    if(!dbGame || sequencial === 0)
+    if (!dbGame || sequencial === 0) return
+    if (sequencial === 1) {
       return
-    if(sequencial === 1) {
-      return
-    }
-    else {
+    } else {
       game.undo()
       game.undo()
       const gameTime = Number.parseInt(dbGame.game.rithm.split('+')[0]) * 60
-      const move = sequencial - 4 >= 0 ? dbGame.moves[sequencial - 4] : {time: gameTime}
-      const move2 = sequencial - 3 >= 0 ? dbGame.moves[sequencial - 3] : {time: gameTime}
+      const move =
+        sequencial - 4 >= 0 ? dbGame.moves[sequencial - 4] : { time: gameTime }
+      const move2 =
+        sequencial - 3 >= 0 ? dbGame.moves[sequencial - 3] : { time: gameTime }
       setFen(game.fen())
-      setHistory(game.history({verbose: true}))
-      if(sequencial % 2 === 0) {
-        if(perspective === 'white') {
+      setHistory(game.history({ verbose: true }))
+      if (sequencial % 2 === 0) {
+        if (perspective === 'white') {
           timer1.changeValue(move.time)
           timer2.changeValue(move2.time)
-        }
-        else {
+        } else {
           timer2.changeValue(move.time)
           timer1.changeValue(move2.time)
         }
-      }
-      else {
-        if(perspective === 'white') {
+      } else {
+        if (perspective === 'white') {
           timer1.changeValue(move2.time)
           timer2.changeValue(move.time)
-        }
-        else {
+        } else {
           timer2.changeValue(move2.time)
           timer1.changeValue(move.time)
         }
@@ -109,45 +107,49 @@ export default function GameReview() {
   }
 
   const handleNextMove = () => {
-    if(!dbGame)
-      return
-    if(sequencial === dbGame.moves.length)
-      return
+    if (!dbGame) return
+    if (sequencial === dbGame.moves.length) return
     const move = dbGame.moves[sequencial]
     handleDrop(move.from as Square, move.to as Square)
     const timer1 = timerRef.current as TimerFunctions
     const timer2 = timer2Ref.current as TimerFunctions
-    if(sequencial % 2 === 0) {
-      if(perspective === 'white')
-        timer1.changeValue(move.time)
-      else
-        timer2.changeValue(move.time)
-    }
-    else {
-      if(perspective === 'white')
-        timer2.changeValue(move.time)
-      else
-        timer1.changeValue(move.time)
+    if (sequencial % 2 === 0) {
+      if (perspective === 'white') timer1.changeValue(move.time)
+      else timer2.changeValue(move.time)
+    } else {
+      if (perspective === 'white') timer2.changeValue(move.time)
+      else timer1.changeValue(move.time)
     }
     setSequencial(sequencial + 1)
   }
 
   const handleChangePerspective = () => {
-    if(!dbGame)
-      return
+    if (!dbGame) return
+    const currentPerspective = perspective
     setPerspective(perspective === 'white' ? 'black' : 'white')
     const timer1 = timerRef.current as TimerFunctions
     const timer2 = timer2Ref.current as TimerFunctions
     const gameTime = Number.parseInt(dbGame.game.rithm.split('+')[0]) * 60
-    const move = sequencial - 2 >= 0 ? dbGame.moves[sequencial - 2] : {time: gameTime}
-    const move2 = sequencial - 1 >= 0 ? dbGame.moves[sequencial - 1] : {time: gameTime}
-    if(sequencial % 2 === 0) {
-      timer1.changeValue(move2.time)
-      timer2.changeValue(move.time)
-    }
-    else {
-      timer1.changeValue(move.time)
-      timer2.changeValue(move2.time)
+    const move =
+      sequencial - 2 >= 0 ? dbGame.moves[sequencial - 2] : { time: gameTime }
+    const move2 =
+      sequencial - 1 >= 0 ? dbGame.moves[sequencial - 1] : { time: gameTime }
+    if (sequencial % 2 === 0) {
+      if (currentPerspective === 'white') {
+        timer1.changeValue(move2.time)
+        timer2.changeValue(move.time)
+      } else {
+        timer1.changeValue(move.time)
+        timer2.changeValue(move2.time)
+      }
+    } else {
+      if (currentPerspective === 'white') {
+        timer1.changeValue(move.time)
+        timer2.changeValue(move2.time)
+      } else {
+        timer1.changeValue(move2.time)
+        timer2.changeValue(move.time)
+      }
     }
   }
 
@@ -158,43 +160,88 @@ export default function GameReview() {
   }
 
   return (
-    <Box width='100%' className={classes.box}>
+    <Box width="100%" className={classes.box}>
       <div>
-        <Button style={{padding: 10}} onClick={handlePrevMove}>Previous Move</Button>
-        <Button style={{padding: 10}} onClick={handleNextMove}>Next Move</Button>
-        <Button style={{padding: 10}} onClick={handleChangePerspective}>Change Perspective</Button>
-      </div>
-      {dbGame && sequencial === dbGame.moves.length && 
-        <Typography align="center">
-          {dbGame.game.reasonEnd === 'draw' ? `The game ended in a draw.` : `${dbGame.game.winner} wins by ${dbGame.game.reasonEnd}.`}
-        </Typography>
-      }
-      <Box width={width}>
-        <Button onClick={dbGame ? handleGoToProfile(perspective === 'black' ? dbGame.game.whitePlayer.id : dbGame.game.blackPlayer.id) : () => {}}>
-          {`${dbGame ? perspective === 'black' ? dbGame.game.whitePlayer.name : dbGame.game.blackPlayer.name : 'Loading Info...'} (Click To See Profile)`}
+        <Button style={{ padding: 10 }} onClick={handlePrevMove}>
+          Previous Move
         </Button>
-        <Timer 
-          startTime={dbGame ? Number.parseInt(dbGame.game.rithm.split('+')[0]) * 60 : 0} 
+        <Button style={{ padding: 10 }} onClick={handleNextMove}>
+          Next Move
+        </Button>
+        <Button style={{ padding: 10 }} onClick={handleChangePerspective}>
+          Change Perspective
+        </Button>
+      </div>
+      {dbGame && sequencial === dbGame.moves.length && (
+        <Typography align="center">
+          {dbGame.game.reasonEnd === 'draw'
+            ? `The game ended in a draw.`
+            : `${dbGame.game.winner} wins by ${dbGame.game.reasonEnd}.`}
+        </Typography>
+      )}
+      <Box width={width}>
+        <Button
+          onClick={
+            dbGame
+              ? handleGoToProfile(
+                  perspective === 'black'
+                    ? dbGame.game.whitePlayer.id
+                    : dbGame.game.blackPlayer.id,
+                )
+              : () => {}
+          }
+        >
+          {`${
+            dbGame
+              ? perspective === 'black'
+                ? dbGame.game.whitePlayer.name
+                : dbGame.game.blackPlayer.name
+              : 'Loading Info...'
+          } (Click To See Profile)`}
+        </Button>
+        <Timer
+          startTime={
+            dbGame ? Number.parseInt(dbGame.game.rithm.split('+')[0]) * 60 : 0
+          }
           ref={timer2Ref}
         />
       </Box>
-      <Chessboard 
+      <Chessboard
         orientation={perspective}
-        onDrop={({sourceSquare, targetSquare}) => {}}
-        position={fen} calcWidth={({screenWidth}) => {
-        setWidth(600)
-        return 600
-      }}/>
+        onDrop={({ sourceSquare, targetSquare }) => {}}
+        position={fen}
+        calcWidth={({ screenWidth }) => {
+          setWidth(600)
+          return 600
+        }}
+      />
       <Box width={width}>
-        <Button onClick={dbGame ? handleGoToProfile(perspective === 'white' ? dbGame.game.whitePlayer.id : dbGame.game.blackPlayer.id) : () => {}}>
-          {`${dbGame ? perspective === 'white' ? dbGame.game.whitePlayer.name : dbGame.game.blackPlayer.name : 'Loading Info...'} (Click To See Profile)`}
+        <Button
+          onClick={
+            dbGame
+              ? handleGoToProfile(
+                  perspective === 'white'
+                    ? dbGame.game.whitePlayer.id
+                    : dbGame.game.blackPlayer.id,
+                )
+              : () => {}
+          }
+        >
+          {`${
+            dbGame
+              ? perspective === 'white'
+                ? dbGame.game.whitePlayer.name
+                : dbGame.game.blackPlayer.name
+              : 'Loading Info...'
+          } (Click To See Profile)`}
         </Button>
-        <Timer 
-          startTime={dbGame ? Number.parseInt(dbGame.game.rithm.split('+')[0]) * 60 : 0} 
+        <Timer
+          startTime={
+            dbGame ? Number.parseInt(dbGame.game.rithm.split('+')[0]) * 60 : 0
+          }
           ref={timerRef}
         />
       </Box>
     </Box>
   )
-
 }

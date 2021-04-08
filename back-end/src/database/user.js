@@ -79,9 +79,10 @@ async function getFollowing(userId) {
 
   const text = 'select * from follow where seguidor=$1'
   const params = [userId]
-  await client.query(text, params)
+  const result = await client.query(text, params)
 
   await client.end()
+  return result.rows
 }
 
 async function getFollowers(userId) {
