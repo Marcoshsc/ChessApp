@@ -25,6 +25,7 @@ import { useRecoilState } from 'recoil'
 import { authAtom, UserInfo } from '../../atoms/user'
 import FollowingPage from '../FollowingPage'
 import { Button } from '@material-ui/core'
+import SearchPage from '../SearchPage'
 
 export default function PermanentDrawerLeft() {
   const classes = useStyles()
@@ -129,6 +130,9 @@ export default function PermanentDrawerLeft() {
           </Route>
           <Route path="/review/:id">
             <GameReview />
+          </Route>
+          <Route path="/search/:username">
+            <SearchPage />
           </Route>
         </Switch>
       </main>

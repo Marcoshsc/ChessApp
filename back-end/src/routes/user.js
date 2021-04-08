@@ -103,11 +103,8 @@ userRouter.get('/follows/:userId', async (req, res) => {
 userRouter.get('/search/:username', async (req, res) => {
   const { username } = req.params
   try {
-    const user = await searchUser(username)
-    if(user)
-      res.status(200).send(user)
-    else
-      res.status(204).send()
+    const users = await searchUser(username)
+    res.status(200).send(users)
   } catch(err) {
     console.log(err)
     res.status(400).send('Could not search for user.')

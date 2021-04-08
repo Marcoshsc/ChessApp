@@ -4,28 +4,26 @@ import {
   ButtonGroup,
   CircularProgress,
   FormControl,
-  Grid,
   InputLabel,
   Select,
+  Typography,
 } from '@material-ui/core'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useStyles } from './styles'
-import { useStyles as useChessStyles } from '../ChessBoard/styles'
-import { useHistory, Switch, Route } from 'react-router-dom'
-import Game from '../Game'
+import { useHistory } from 'react-router-dom'
 import io from 'socket.io-client'
 import { useRecoilState } from 'recoil'
 import { authAtom } from '../../atoms/user'
 
 export default function PlayPage() {
   const classes = useStyles()
-  const chessClasses = useChessStyles()
   const history = useHistory()
   const [rithm, setRithm] = useState<string>()
   const [auth] = useRecoilState(authAtom)
   const [waiting, setWaiting] = useState(false)
 
   const handleCreateGame = () => {
+    if (!rithm) return
     setWaiting(true)
     const socket = io('http://localhost:3001/')
     socket.emit('userData', {
@@ -78,10 +76,22 @@ export default function PlayPage() {
       </FormControl>
       <ButtonGroup>
         <Button onClick={handleCreateGame} variant="outlined" color="primary">
-          Play against a random opponent
+          Play
         </Button>
       </ButtonGroup>
-      {waiting && <CircularProgress />}
+      {waiting && (
+        <div
+          style={{
+            padding: 10,
+            display: 'flex',
+            flexDirection: 'row',
+            gap: 20,
+          }}
+        >
+          <Typography>Searching for a game...</Typography>
+          <CircularProgress />
+        </div>
+      )}
     </Box>
   )
 }

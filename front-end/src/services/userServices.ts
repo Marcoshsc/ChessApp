@@ -140,3 +140,26 @@ export async function getProfile(
     isFollowing: dto.isFollowing,
   }
 }
+
+export async function searchUser(
+  token: string,
+  username: string,
+): Promise<(Omit<UserInfo, 'jwt'> & { data_criacao: Date })[]> {
+  const response = await axios.get(
+    `http://localhost:3001/user/search/${username}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  )
+
+  return response.data.map((el: any): Omit<UserInfo, 'jwt'> & {
+    data_criacao: Date
+  } => {
+    return {
+      ...el,
+      data_criacao: new Date(el.data_criacao),
+    }
+  })
+}

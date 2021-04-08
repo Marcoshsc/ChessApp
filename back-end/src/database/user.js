@@ -99,12 +99,12 @@ async function getFollowers(userId) {
 async function searchUser(username) {
   const client = getClient()
 
-  const text = 'select id, nome, data_criacao from usuario where nome=$1'
-  const params = [username]
+  const text = 'select id, nome, data_criacao from usuario where UPPER(nome) like UPPER($1)'
+  const params = [`%${username}%`]
   const result = await client.query(text, params)
 
   await client.end()
-  return result.rows.length === 0 ? undefined : result.rows[0]
+  return result.rows
 }
 
 module.exports = {
