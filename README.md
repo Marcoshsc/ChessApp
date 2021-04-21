@@ -47,7 +47,7 @@ PT-BR: PostgreSQL 12.0 e node de versão >= 14.15.1.
 
 # Run / Execução
 
-EN-US: Firstly, set up a PostgreSQL database named chessapp and run [this script] on the database, in order to create the tables. Then, clone the repository on your machine, navigate to the directory and set up the back-end as described below:
+EN-US: Firstly, set up a PostgreSQL database named chessapp and run [this script](https://github.com/Marcoshsc/ChessApp/blob/master/database/db-init.sql) on the database, in order to create the tables. Then, clone the repository on your machine, navigate to the directory and set up the back-end as described below:
 
     cd back-end
     yarn
@@ -61,7 +61,7 @@ Now you are ready to start the front-end application. The steps are described be
 
 Connection data can be changed on [this file](https://github.com/Marcoshsc/ChessApp/blob/master/back-end/src/database/connection.js).
  
-PT-BR: Primeiramente, crie um banco de dados PostgreSQL chamado chessapp e rode [esse script] no banco, para criar as tabelas. Então, clone o repositório na sua máquina, navegue até o diretório e faça o setup do back-end como descrito abaixo:
+PT-BR: Primeiramente, crie um banco de dados PostgreSQL chamado chessapp e rode [esse script](https://github.com/Marcoshsc/ChessApp/blob/master/database/db-init.sql) no banco, para criar as tabelas. Então, clone o repositório na sua máquina, navegue até o diretório e faça o setup do back-end como descrito abaixo:
 
     cd back-end
     yarn
