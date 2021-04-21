@@ -6,7 +6,8 @@ export const useStyles = makeStyles((theme: Theme) =>
       display: "flex",
       flexDirection: "column",
       width: "100%",
-      gap: 10,
+      gap: 20,
+      margin: 10,
       padding: 10,
     },
     mainDiv: {

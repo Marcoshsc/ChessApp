@@ -1,5 +1,8 @@
 import axios from "axios";
 import { PlayerGame, PlayerGameWithMoves } from "../atoms/game";
+import data from '../globals'
+
+const { url } = data
 
 interface PlayerInfoDTO {
   id: number
@@ -29,7 +32,7 @@ interface PlayerGameWithMovesDTO {
 }
 
 export async function getGame(token: string, gameId: number): Promise<PlayerGameWithMoves> {
-  const response = await axios.get(`http://localhost:3001/games/game/${gameId}`, {
+  const response = await axios.get(`${url}/games/game/${gameId}`, {
     headers: {
       'Authorization': `Bearer ${token}`
     }
@@ -64,7 +67,7 @@ export async function getGame(token: string, gameId: number): Promise<PlayerGame
 }
 
 export async function getGames(token: string, userId: number): Promise<PlayerGame[]> {
-  const response = await axios.get(`http://localhost:3001/games/${userId}`, {
+  const response = await axios.get(`${url}/games/${userId}`, {
     headers: {
       'Authorization': `Bearer ${token}`
     }

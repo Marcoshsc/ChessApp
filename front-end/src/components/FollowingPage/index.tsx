@@ -49,7 +49,7 @@ export default function FollowingPage() {
         <Typography align="center">{`Since ${formatDate(
           info.creationDate,
         )}`}</Typography>
-        <div style={{ display: 'flex', flexDirection: 'row', gap: 10 }}>
+        <div style={{ display: 'flex', flexDirection: 'row', gap: 20, marginBottom: 10 }}>
           <Button
             style={{
               flexGrow: following && Number.parseInt(id) === auth?.id ? 0.5 : 1,

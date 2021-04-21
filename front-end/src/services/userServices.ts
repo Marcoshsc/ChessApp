@@ -1,5 +1,8 @@
 import axios from 'axios'
 import { FollowInfo, UserInfo, UserInfoProfile } from '../atoms/user'
+import data from '../globals'
+
+const { url } = data
 
 interface GameInfoDTO {
   total: string
@@ -38,7 +41,7 @@ export async function login(
   email: string,
   password: string,
 ): Promise<UserInfo> {
-  const response = await axios.post('http://localhost:3001/user/login', {
+  const response = await axios.post(`${url}/user/login`, {
     email,
     password,
   })
@@ -50,7 +53,7 @@ export async function signUp(
   email: string,
   password: string,
 ): Promise<UserInfo> {
-  const response = await axios.post('http://localhost:3001/user/signup', {
+  const response = await axios.post(`${url}/user/signup`, {
     name,
     email,
     password,
@@ -63,7 +66,7 @@ export async function followOrUnfollow(
   following: number,
 ): Promise<void> {
   await axios.post(
-    `http://localhost:3001/user/follow/${following}`,
+    `${url}/user/follow/${following}`,
     {},
     {
       headers: {
@@ -78,7 +81,7 @@ export async function getFollowInfo(
   userId: number,
 ): Promise<FollowInfo> {
   const response = await axios.get(
-    `http://localhost:3001/user/follows/${userId}`,
+    `${url}/user/follows/${userId}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -108,7 +111,7 @@ export async function getProfile(
   userId: number,
 ): Promise<UserInfoProfile> {
   const response = await axios.get(
-    `http://localhost:3001/user/profile/${userId}`,
+    `${url}/user/profile/${userId}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -146,7 +149,7 @@ export async function searchUser(
   username: string,
 ): Promise<(Omit<UserInfo, 'jwt'> & { data_criacao: Date })[]> {
   const response = await axios.get(
-    `http://localhost:3001/user/search/${username}`,
+    `${url}/user/search/${username}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,

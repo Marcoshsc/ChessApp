@@ -107,6 +107,8 @@ export default function ShowGames() {
       </div>
       {games.filter(game => {
         const color = game.blackPlayer.id === (Number.parseInt(id)) ? 'black' : 'white'
+        if(filterResult !== 'all' && game.reasonEnd === 'draw')
+          return false
         if(filterResult !== 'all' && ((game.winner !== color && filterResult === 'victory') || (game.winner === color && filterResult === 'defeat')))
           return false
         if(filterColor !== 'all' && color !== filterColor)
