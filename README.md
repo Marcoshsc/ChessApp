@@ -59,7 +59,7 @@ Now you are ready to start the front-end application. The steps are described be
     yarn
     yarn start
 
-Connection data can be changed on [this file].
+Connection data can be changed on [this file](https://github.com/Marcoshsc/ChessApp/blob/master/back-end/src/database/connection.js).
  
 PT-BR: Primeiramente, crie um banco de dados PostgreSQL chamado chessapp e rode [esse script] no banco, para criar as tabelas. Então, clone o repositório na sua máquina, navegue até o diretório e faça o setup do back-end como descrito abaixo:
 
@@ -73,4 +73,4 @@ Agora você está pronto para iniciar o front-end. Os passos são descritos abai
     yarn
     yarn start
 
-Dados da conexão com o banco de dados podem ser mudados [neste arquivo].
+Dados da conexão com o banco de dados podem ser mudados [neste arquivo](https://github.com/Marcoshsc/ChessApp/blob/master/back-end/src/database/connection.js).
