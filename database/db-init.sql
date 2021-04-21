@@ -1,5 +1,3 @@
-CREATE DATABASE chessapp;
-
 CREATE TABLE usuario (
   id SERIAL NOT NULL,
   nome VARCHAR(50) NOT NULL UNIQUE,
