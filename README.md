@@ -2,6 +2,8 @@
 
 Author: Marcos Henrique Santos Cunha (Marcoshsc)
 
+Vídeo de Apresentação: https://youtu.be/87WDu5pI2dg
+
 EN-US: Chess app developed to the Databases I class.
 
 PT-BR: Aplicativo de xadrez desenvolvido para a disciplina de Banco de Dados I.
